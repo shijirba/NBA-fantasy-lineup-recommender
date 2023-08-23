@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+<div class="card mt-5">
+    <div class="card-body">
+      <h5 class="card-title">Game Statistic</h5>
+      
+    <form class="row g-3 needs-validation" novalidate>
+        <div class="col-md-6">
+            <select id="selectedPlayer" class="form-select" id="validationCustom04" required>
+                <option selected disabled value="">Select player</option>
+                {% for player in players %}
+                    <option value="{{ player.name }}">{{ player.name }}</option>
+                {% endfor %}
+            </select>
+            <div class="invalid-feedback">
+            Please select a valid player.
+            </div>
+        </div>
+        <div class="col-md-6">
+            <select id="selectedTeam" class="form-select" id="validationCustom04" required>
+                <option selected disabled value="">Select team</option>
+                {% for team in teams %}
+                    <option value="{{ team.opponent }}">{{ team.opponent }}</option>
+                {% endfor %}
+            </select>
+            <div class="invalid-feedback">
+            Please select a valid team.
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="stats" value="PTS" id="flexCheckDefault" checked required>
+                <label class="form-check-label" for="flexCheckDefault">
+                  Point
+                </label>
+            </div>    
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="stats" value="TRB" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                  Rebound
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="stats" value="AST" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                  Assist
+                </label>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="stats" value="STL" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                  Steal
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="stats" value="BLK" id="flexCheckDefault">
+                <label class="form-check-label" for="flexCheckDefault">
+                  Block
+                </label>
+            </div>
+        </div>
+        <div class="col-md-4 text-center">
+            <img id="playerImg" src="/static/images/nba-logo.png" class="img-fluid rounded mx-auto" alt="profileLogo">
+        </div>
+        <div class="col-md-12">
+            <button id="find" class="btn btn-primary" type="button">Find</button>
+        </div>
+    </form>
+    <div>
+        <canvas id="pointChart"></canvas>
+        <canvas id="reboundChart"></canvas>
+        <canvas id="assistChart"></canvas>
+        <canvas id="stealChart"></canvas>
+        <canvas id="blockChart"></canvas>
+    </div>
+    </div>
+  </div>
+
+      
+{% endblock content %}
+
+{% block javascript %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+    <script>
+        // (function () {
+        //     'use strict'
+        
+        //     // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        //     var forms = document.querySelectorAll('.needs-validation')
+        
+        //     // Loop over them and prevent submission
+        //     Array.prototype.slice.call(forms)
+        //     .forEach(function (form) {
+        //         form.addEventListener('submit', function (event) {
+        //         if (!form.checkValidity()) {
+        //             event.preventDefault()
+        //             event.stopPropagation()
+        //         }
+        
+        //         form.classList.add('was-validated')
+        //         }, false)
+        //     })
+        // })()
+        const pointChart = document.getElementById('pointChart');
+    
+        var ptsChart = new Chart(pointChart, {
+            type: 'line',
+            data: {
+            labels: [],
+            datasets: [{
+                label: 'Statistic',
+                data: [],
+                borderWidth: 3
+            }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                    beginAtZero: true
+                    }
+                },
+                plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'PLAYER POINT STAT'
+                }
+                }
+            },
+        });
+        const reboundChart = document.getElementById('reboundChart');
+    
+        var trbChart = new Chart(reboundChart, {
+            type: 'line',
+            data: {
+            labels: [],
+            datasets: [{
+                label: 'Statistic',
+                data: [],
+                borderWidth: 3
+            }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                    beginAtZero: true
+                    }
+                },
+                plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'PLAYER REBOUND STAT'
+                }
+                }
+            },
+        });
+        const assistChart = document.getElementById('assistChart');
+    
+        var astChart = new Chart(assistChart, {
+            type: 'line',
+            data: {
+            labels: ['PTS', 'TRB', 'AST', 'STL', 'BLK'],
+            datasets: [{
+                label: 'Statistic',
+                data: [],
+                borderWidth: 3
+            }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                    beginAtZero: true
+                    }
+                },
+                plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'PLAYER ASSIST STAT'
+                }
+                }
+            },
+        });
+        const stealChart = document.getElementById('stealChart');
+    
+        var stlChart = new Chart(stealChart, {
+            type: 'line',
+            data: {
+            labels: [],
+            datasets: [{
+                label: 'Statistic',
+                data: [],
+                borderWidth: 3
+            }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                    beginAtZero: true
+                    }
+                },
+                plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'PLAYER STEAL STAT'
+                }
+                }
+            },
+        });
+        const blockChart = document.getElementById('blockChart');
+    
+        var blkChart = new Chart(blockChart, {
+            type: 'line',
+            data: {
+            labels: [],
+            datasets: [{
+                label: 'Statistic',
+                data: [],
+                borderWidth: 3
+            }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                    beginAtZero: true
+                    }
+                },
+                plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'PLAYER BLOCK STAT'
+                }
+                }
+            },
+        });
+
+        pointChart.classList.add('d-none')
+        reboundChart.classList.add('d-none')
+        assistChart.classList.add('d-none')
+        stealChart.classList.add('d-none')
+        blockChart.classList.add('d-none')
+
+        $('#find').click(() => {
+            var forms = document.querySelectorAll('.needs-validation')
+
+            if (forms[0].checkValidity()) {
+                let playerName = $('#selectedPlayer').val();
+                let team = $('#selectedTeam').val();
+                let stats = []
+                $('input[name="stats"]:checked').each(function() {
+                    stats.push(this.value)
+                });
+
+                console.log(team,playerName,stats)
+                $.ajax(
+                {
+                    type:"GET",
+                    url: "/find",
+                    data:{
+                            playerName: playerName,
+                            team: team,
+                            stats: stats
+                    },
+                    success: function( data ) 
+                    {
+                        console.log(data)
+                        ptsChart.data.datasets[0].data = data.data[0]
+                        ptsChart.data.labels = data.label
+                        ptsChart.update()
+                        pointChart.classList.remove('d-none')
+                        document.getElementById('playerImg').src = data.url
+
+                        if(data.stats.includes('TRB')){
+                            trbChart.data.datasets[0].data = data.data[1]
+                            trbChart.data.labels = data.label
+                            trbChart.update()
+                            reboundChart.classList.remove('d-none')
+                        }else{
+                            reboundChart.classList.add('d-none')
+                        }
+                        if(data.stats.includes('AST')){
+                            astChart.data.datasets[0].data = data.data[2]
+                            astChart.data.labels = data.label
+                            astChart.update()
+                            assistChart.classList.remove('d-none')
+                        }else{
+                            assistChart.classList.add('d-none')
+                        }
+                        if(data.stats.includes('STL')){
+                            stlChart.data.datasets[0].data = data.data[3]
+                            stlChart.data.labels = data.label
+                            stlChart.update()
+                            stealChart.classList.remove('d-none')
+                        }else{
+                            stealChart.classList.add('d-none')
+                        }
+                        if(data.stats.includes('BLK')){
+                            blkChart.data.datasets[0].data = data.data[4]
+                            blkChart.data.labels = data.label
+                            blkChart.update()
+                            blockChart.classList.remove('d-none')
+                        }else{
+                            blockChart.classList.add('d-none')
+                        }
+                        
+                    }
+                })
+
+                console.log('jiji')
+            }
+    
+            forms[0].classList.add('was-validated')
+
+        })
+    </script>
+{% endblock javascript %}

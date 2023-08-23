@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+<div class="card mt-5">
+    <h1 class="card-header text-center">
+        COMPARE
+    </h1>
+    <div class="card-body">      
+    <form class="row g-3 needs-validation" novalidate>
+        <div class="col-md-6">
+            <img id="playerImg" src="/static/images/nba-logo.png" class="img-fluid rounded mx-auto" alt="profileLogo">
+            <select id="selectedPlayer" class="form-select" id="validationCustom04" required>
+                <option selected disabled value="">Select player</option>
+                {% for player in players %}
+                    <option value="{{ player.name }}">{{ player.name }}</option>
+                {% endfor %}
+            </select>
+            <div class="invalid-feedback">
+            Please select a valid player.
+            </div>
+        </div>
+        <div class="col-md-6">
+            <img id="playerImg2" src="/static/images/nba-logo.png" class="img-fluid rounded mx-auto" alt="profileLogo">
+            <select id="selectedPlayer2" class="form-select" id="validationCustom04" required>
+                <option selected disabled value="">Select player</option>
+                {% for player in players %}
+                    <option value="{{ player.name }}">{{ player.name }}</option>
+                {% endfor %}
+            </select>
+            <div class="invalid-feedback">
+            Please select a valid player.
+            </div>
+        </div>
+        <div class="col-md-12">
+            <button id="compare" class="btn btn-primary" type="button">Compare</button>
+        </div>
+    </form>
+    <div>
+       
+    </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block javascript %}
+    <script>
+        $('#compare').click(() => {
+            var forms = document.querySelectorAll('.needs-validation')
+
+            if (forms[0].checkValidity()) {
+                let playerName = $('#selectedPlayer').val();
+                let playerName2 = $('#selectedPlayer2').val();
+                // $.ajax(
+                // {
+                //     type:"GET",
+                //     url: "/find",
+                //     data:{
+                //             playerName: playerName,
+                //             team: team,
+                //             stats: stats
+                //     },
+                //     success: function( data ) 
+                //     {
+                //         console.log(data)
+                //         ptsChart.data.datasets[0].data = data.data[0]
+                //         ptsChart.data.labels = data.label
+                //         ptsChart.update()
+                //         pointChart.classList.remove('d-none')
+                //         document.getElementById('playerImg').src = data.url
+
+                //         if(data.stats.includes('TRB')){
+                //             trbChart.data.datasets[0].data = data.data[1]
+                //             trbChart.data.labels = data.label
+                //             trbChart.update()
+                //             reboundChart.classList.remove('d-none')
+                //         }else{
+                //             reboundChart.classList.add('d-none')
+                //         }
+                //         if(data.stats.includes('AST')){
+                //             astChart.data.datasets[0].data = data.data[2]
+                //             astChart.data.labels = data.label
+                //             astChart.update()
+                //             assistChart.classList.remove('d-none')
+                //         }else{
+                //             assistChart.classList.add('d-none')
+                //         }
+                //         if(data.stats.includes('STL')){
+                //             stlChart.data.datasets[0].data = data.data[3]
+                //             stlChart.data.labels = data.label
+                //             stlChart.update()
+                //             stealChart.classList.remove('d-none')
+                //         }else{
+                //             stealChart.classList.add('d-none')
+                //         }
+                //         if(data.stats.includes('BLK')){
+                //             blkChart.data.datasets[0].data = data.data[4]
+                //             blkChart.data.labels = data.label
+                //             blkChart.update()
+                //             blockChart.classList.remove('d-none')
+                //         }else{
+                //             blockChart.classList.add('d-none')
+                //         }
+                        
+                //     }
+                // })
+            }
+    
+            forms[0].classList.add('was-validated')
+
+        })
+    </script>
+{% endblock javascript %}
