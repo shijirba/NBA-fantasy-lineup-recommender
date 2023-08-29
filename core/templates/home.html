@@ -107,8 +107,20 @@
         //         }, false)
         //     })
         // })()
-        const pointChart = document.getElementById('pointChart');
-    
+
+        const drawAverageValue = (chart, avgValue) => {
+            const ctx = chart.ctx;
+            const chartArea = chart.chartArea;
+            const x = chartArea.right - 40; 
+            const y = chartArea.top + 20;
+
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'right'; 
+            ctx.fillText('Avg: ' + avgValue.toFixed(2), x, y);
+        };
+        
+        const pointChart = document.getElementById('pointChart');    
         var ptsChart = new Chart(pointChart, {
             type: 'line',
             data: {
