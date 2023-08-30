@@ -299,6 +299,22 @@
                     },
                     success: function( data ) 
                     {
+                        let numGames = data.data[0].length;
+                        console.log('number of games!', numGames);
+                        let avgStats = [];
+                        for (let i = 0; i < data.data.length; i++) {
+                            let stat = data.data[i];
+                            let sum = 0;
+
+                            for (let j = 0; j < stat.length; j++) {
+                                let value = parseFloat(stat[j]); 
+                                sum += value;
+                            }
+                            let average = sum / numGames;
+                            avgStats.push(average);
+                        }
+                        console.log('Average stats:', avgStats[0], avgStats[1], avgStats[2], avgStats[3], avgStats[4]);
+                        
                         console.log(data)
                         ptsChart.data.datasets[0].data = data.data[0]
                         ptsChart.data.labels = data.label
