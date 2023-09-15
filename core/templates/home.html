@@ -29,7 +29,7 @@
             Please select a valid team.
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="stats" value="PTS" id="flexCheckDefault" checked required>
                 <label class="form-check-label" for="flexCheckDefault">
@@ -49,7 +49,7 @@
                 </label>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="stats" value="STL" id="flexCheckDefault">
                 <label class="form-check-label" for="flexCheckDefault">
@@ -63,7 +63,13 @@
                 </label>
             </div>
         </div>
+        <div class="col-md-2">
+            <h5>2022-2023</h5>
+            <h5>Rank:</h5>
+            <h5 id="rank">~</h5>
+        </div>
         <div class="col-md-4 text-center">
+            <h5>Score Prediction: <span id="prediction">~</span></h5>
             <img id="playerImg" src="/static/images/nba-logo.png" class="img-fluid rounded mx-auto" alt="profileLogo">
         </div>
         <div class="col-md-12">
@@ -85,6 +91,7 @@
 
 {% block javascript %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 
     <script>
@@ -108,19 +115,8 @@
         //     })
         // })()
 
-        const drawAverageValue = (chart, avgValue) => {
-            const ctx = chart.ctx;
-            const chartArea = chart.chartArea;
-            const x = chartArea.right - 40; 
-            const y = chartArea.top + 20;
-
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-            ctx.font = '12px Arial';
-            ctx.textAlign = 'right'; 
-            ctx.fillText('Avg: ' + avgValue.toFixed(2), x, y);
-        };
-        
-        const pointChart = document.getElementById('pointChart');    
+        const pointChart = document.getElementById('pointChart');
+    
         var ptsChart = new Chart(pointChart, {
             type: 'line',
             data: {
@@ -139,13 +135,29 @@
                     }
                 },
                 plugins: {
-                legend: {
-                    position: 'top',
-                },
-                title: {
-                    display: true,
-                    text: 'PLAYER POINT STAT'
-                }
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'PLAYER POINT STAT'
+                    },
+                    annotation: { // Add this annotation configuration
+                        annotations: [{
+                            type: 'line',
+                            borderColor: 'black',
+                            borderDash: [6, 6],
+                            borderDashOffset: 0,
+                            borderWidth: 3,
+                            label: {
+                                display: true,
+                                content: 'Average: ' + 0,
+                                position: 'end'
+                            },
+                            scaleID: 'y',
+                            value: 0,
+                        }]
+                    }
                 }
             },
         });
@@ -175,7 +187,23 @@
                 title: {
                     display: true,
                     text: 'PLAYER REBOUND STAT'
-                }
+                },
+                    annotation: { // Add this annotation configuration
+                        annotations: [{
+                            type: 'line',
+                            borderColor: 'black',
+                            borderDash: [6, 6],
+                            borderDashOffset: 0,
+                            borderWidth: 3,
+                            label: {
+                                display: true,
+                                content: 'Average: ' + 0,
+                                position: 'end'
+                            },
+                            scaleID: 'y',
+                            value: 0,
+                        }]
+                    }
                 }
             },
         });
@@ -205,7 +233,23 @@
                 title: {
                     display: true,
                     text: 'PLAYER ASSIST STAT'
-                }
+                },
+                    annotation: { // Add this annotation configuration
+                        annotations: [{
+                            type: 'line',
+                            borderColor: 'black',
+                            borderDash: [6, 6],
+                            borderDashOffset: 0,
+                            borderWidth: 3,
+                            label: {
+                                display: true,
+                                content: 'Average: ' + 0,
+                                position: 'end'
+                            },
+                            scaleID: 'y',
+                            value: 0,
+                        }]
+                    }
                 }
             },
         });
@@ -235,7 +279,23 @@
                 title: {
                     display: true,
                     text: 'PLAYER STEAL STAT'
-                }
+                },
+                    annotation: { // Add this annotation configuration
+                        annotations: [{
+                            type: 'line',
+                            borderColor: 'black',
+                            borderDash: [6, 6],
+                            borderDashOffset: 0,
+                            borderWidth: 3,
+                            label: {
+                                display: true,
+                                content: 'Average: ' + 0,
+                                position: 'end'
+                            },
+                            scaleID: 'y',
+                            value: 0,
+                        }]
+                    }
                 }
             },
         });
@@ -265,7 +325,23 @@
                 title: {
                     display: true,
                     text: 'PLAYER BLOCK STAT'
-                }
+                },
+                    annotation: { // Add this annotation configuration
+                        annotations: [{
+                            type: 'line',
+                            borderColor: 'black',
+                            borderDash: [6, 6],
+                            borderDashOffset: 0,
+                            borderWidth: 3,
+                            label: {
+                                display: true,
+                                content: 'Average: ' + 0,
+                                position: 'end'
+                            },
+                            scaleID: 'y',
+                            value: 0,
+                        }]
+                    }
                 }
             },
         });
@@ -287,7 +363,6 @@
                     stats.push(this.value)
                 });
 
-                console.log(team,playerName,stats)
                 $.ajax(
                 {
                     type:"GET",
@@ -299,31 +374,21 @@
                     },
                     success: function( data ) 
                     {
-                        let numGames = data.data[0].length;
-                        console.log('number of games!', numGames);
-                        let avgStats = [];
-                        for (let i = 0; i < data.data.length; i++) {
-                            let stat = data.data[i];
-                            let sum = 0;
-
-                            for (let j = 0; j < stat.length; j++) {
-                                let value = parseFloat(stat[j]); 
-                                sum += value;
-                            }
-                            let average = sum / numGames;
-                            avgStats.push(average);
-                        }
-                        console.log('Average stats:', avgStats[0], avgStats[1], avgStats[2], avgStats[3], avgStats[4]);
-                        
                         console.log(data)
-                        ptsChart.data.datasets[0].data = data.data[0]
+                        ptsChart.data.datasets[0].data = data.data[0].point
+                        ptsChart.options.plugins.annotation.annotations[0].value = data.data[0].average
+                        ptsChart.options.plugins.annotation.annotations[0].label.content = 'Average: '+data.data[0].average
                         ptsChart.data.labels = data.label
                         ptsChart.update()
                         pointChart.classList.remove('d-none')
                         document.getElementById('playerImg').src = data.url
+                        document.getElementById('rank').innerHTML = data.rank
+                        document.getElementById('prediction').innerHTML = data.prediction
 
                         if(data.stats.includes('TRB')){
-                            trbChart.data.datasets[0].data = data.data[1]
+                            trbChart.data.datasets[0].data = data.data[1].rebound
+                            trbChart.options.plugins.annotation.annotations[0].value = data.data[1].average
+                            trbChart.options.plugins.annotation.annotations[0].label.content = 'Average: '+data.data[1].average
                             trbChart.data.labels = data.label
                             trbChart.update()
                             reboundChart.classList.remove('d-none')
@@ -331,7 +396,9 @@
                             reboundChart.classList.add('d-none')
                         }
                         if(data.stats.includes('AST')){
-                            astChart.data.datasets[0].data = data.data[2]
+                            astChart.data.datasets[0].data = data.data[2].assist
+                            astChart.options.plugins.annotation.annotations[0].value = data.data[2].average
+                            astChart.options.plugins.annotation.annotations[0].label.content = 'Average: '+data.data[2].average
                             astChart.data.labels = data.label
                             astChart.update()
                             assistChart.classList.remove('d-none')
@@ -339,7 +406,9 @@
                             assistChart.classList.add('d-none')
                         }
                         if(data.stats.includes('STL')){
-                            stlChart.data.datasets[0].data = data.data[3]
+                            stlChart.data.datasets[0].data = data.data[3].steal
+                            stlChart.options.plugins.annotation.annotations[0].value = data.data[3].average
+                            stlChart.options.plugins.annotation.annotations[0].label.content = 'Average: '+data.data[3].average
                             stlChart.data.labels = data.label
                             stlChart.update()
                             stealChart.classList.remove('d-none')
@@ -347,18 +416,17 @@
                             stealChart.classList.add('d-none')
                         }
                         if(data.stats.includes('BLK')){
-                            blkChart.data.datasets[0].data = data.data[4]
+                            blkChart.data.datasets[0].data = data.data[4].block
+                            blkChart.options.plugins.annotation.annotations[0].value = data.data[4].average
+                            blkChart.options.plugins.annotation.annotations[0].label.content = 'Average: '+data.data[4].average
                             blkChart.data.labels = data.label
                             blkChart.update()
                             blockChart.classList.remove('d-none')
                         }else{
                             blockChart.classList.add('d-none')
                         }
-                        
                     }
                 })
-
-                console.log('jiji')
             }
     
             forms[0].classList.add('was-validated')
