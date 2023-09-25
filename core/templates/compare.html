@@ -1,113 +1,187 @@
-{% extends 'base.html' %}
-{% block content %}
-
+{% extends 'base.html' %} {% block content %}
 
 <div class="card mt-5">
-    <h1 class="card-header text-center">
-        COMPARE
-    </h1>
-    <div class="card-body">      
+  <h1 class="card-header text-center">Head-to-Head comparison</h1>
+  <div class="card-body">
     <form class="row g-3 needs-validation" novalidate>
-        <div class="col-md-6">
-            <img id="playerImg" src="/static/images/nba-logo.png" class="img-fluid rounded mx-auto" alt="profileLogo">
-            <select id="selectedPlayer" class="form-select" id="validationCustom04" required>
-                <option selected disabled value="">Select player</option>
-                {% for player in players %}
-                    <option value="{{ player.name }}">{{ player.name }}</option>
-                {% endfor %}
-            </select>
-            <div class="invalid-feedback">
-            Please select a valid player.
-            </div>
+      <div class="col-md-6 text-center">
+        <div class="col-md-12 text-center">
+            <h5>2022-2023 Rank</h5>
+            <h5 id="rank1">~</h5>
         </div>
-        <div class="col-md-6">
-            <img id="playerImg2" src="/static/images/nba-logo.png" class="img-fluid rounded mx-auto" alt="profileLogo">
-            <select id="selectedPlayer2" class="form-select" id="validationCustom04" required>
-                <option selected disabled value="">Select player</option>
-                {% for player in players %}
-                    <option value="{{ player.name }}">{{ player.name }}</option>
-                {% endfor %}
-            </select>
-            <div class="invalid-feedback">
-            Please select a valid player.
-            </div>
+        <img
+          id="playerImg"
+          src="/static/images/nba-logo.png"
+          class="img-fluid rounded mx-auto mb-3"
+          alt="profileLogo"
+        />
+        <select
+          id="selectedPlayer"
+          class="form-select"
+          id="validationCustom04"
+          required
+        >
+          <option selected disabled value="">Select player</option>
+          {% for player in players %}
+          <option value="{{ player.name }}">{{ player.name }}</option>
+          {% endfor %}
+        </select>
+        <div class="invalid-feedback">Please select a valid player.</div>
+      </div>
+      <div class="col-md-6 text-center">
+        <div class="col-md-12 text-center">
+            <h5>2022-2023 Rank</h5>
+            <h5 id="rank2">~</h5>
         </div>
-        <div class="col-md-12">
-            <button id="compare" class="btn btn-primary" type="button">Compare</button>
-        </div>
+        <img
+          id="player2Img"
+          src="/static/images/nba-logo.png"
+          class="img-fluid rounded mx-auto mb-3"
+          alt="profileLogo"
+        />
+        <select
+          id="selectedPlayer2"
+          class="form-select"
+          id="validationCustom04"
+          required
+        >
+          <option selected disabled value="">Select player</option>
+          {% for player in players %}
+          <option value="{{ player.name }}">{{ player.name }}</option>
+          {% endfor %}
+        </select>
+        <div class="invalid-feedback">Please select a valid player.</div>
+      </div>
+      <div class="col-md-12">
+        <button id="compare" class="btn btn-primary" type="button">
+          Compare
+        </button>
+      </div>
     </form>
     <div>
-       
-    </div>
+      <canvas id="compareChart"></canvas>
+      <canvas id="compareRadarChart"></canvas>
     </div>
   </div>
-{% endblock content %}
+</div>
+{% endblock content %} {% block javascript %}
 
-{% block javascript %}
-    <script>
-        $('#compare').click(() => {
-            var forms = document.querySelectorAll('.needs-validation')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const DATA_COUNT = 7;
+  const NUMBER_CFG = { count: DATA_COUNT, min: -100, max: 100 };
 
-            if (forms[0].checkValidity()) {
-                let playerName = $('#selectedPlayer').val();
-                let playerName2 = $('#selectedPlayer2').val();
-                // $.ajax(
-                // {
-                //     type:"GET",
-                //     url: "/find",
-                //     data:{
-                //             playerName: playerName,
-                //             team: team,
-                //             stats: stats
-                //     },
-                //     success: function( data ) 
-                //     {
-                //         console.log(data)
-                //         ptsChart.data.datasets[0].data = data.data[0]
-                //         ptsChart.data.labels = data.label
-                //         ptsChart.update()
-                //         pointChart.classList.remove('d-none')
-                //         document.getElementById('playerImg').src = data.url
+  const labels = ["Point", "Rebound", "Steal", "Block", "Assist"];
 
-                //         if(data.stats.includes('TRB')){
-                //             trbChart.data.datasets[0].data = data.data[1]
-                //             trbChart.data.labels = data.label
-                //             trbChart.update()
-                //             reboundChart.classList.remove('d-none')
-                //         }else{
-                //             reboundChart.classList.add('d-none')
-                //         }
-                //         if(data.stats.includes('AST')){
-                //             astChart.data.datasets[0].data = data.data[2]
-                //             astChart.data.labels = data.label
-                //             astChart.update()
-                //             assistChart.classList.remove('d-none')
-                //         }else{
-                //             assistChart.classList.add('d-none')
-                //         }
-                //         if(data.stats.includes('STL')){
-                //             stlChart.data.datasets[0].data = data.data[3]
-                //             stlChart.data.labels = data.label
-                //             stlChart.update()
-                //             stealChart.classList.remove('d-none')
-                //         }else{
-                //             stealChart.classList.add('d-none')
-                //         }
-                //         if(data.stats.includes('BLK')){
-                //             blkChart.data.datasets[0].data = data.data[4]
-                //             blkChart.data.labels = data.label
-                //             blkChart.update()
-                //             blockChart.classList.remove('d-none')
-                //         }else{
-                //             blockChart.classList.add('d-none')
-                //         }
-                        
-                //     }
-                // })
-            }
-    
-            forms[0].classList.add('was-validated')
+  const data = {
+    labels: labels,
+    datasets: [
+      {
+        label: "No Name",
+        data: [],
+        borderColor: "rgb(255, 99, 132)",
+        backgroundColor: "rgb(255, 99, 132, 0.5)",
+      },
+      {
+        label: "No Name",
+        data: [],
+        borderColor: "rgb(54, 162, 235)",
+        backgroundColor: "rgb(54, 162, 235, 0.5)",
+      },
+    ],
+  };
+  const compareChart = document.getElementById("compareChart");
+  var cChart = new Chart(compareChart, {
+    type: "bar",
+    data: data,
+    options: {
+      indexAxis: "y",
+      // Elements options apply to all of the options unless overridden in a dataset
+      // In this case, we are setting the border of each horizontal bar to be 2px wide
+      elements: {
+        bar: {
+          borderWidth: 2,
+        },
+      },
+      responsive: true,
+      plugins: {
+        legend: {
+          position: "right",
+        },
+        title: {
+          display: true,
+          text: "Horizontal Bar Chart",
+        },
+      },
+    },
+  });
 
-        })
-    </script>
+  const compareRadarChart = document.getElementById("compareRadarChart");
+  var rChart = new Chart(compareRadarChart, {
+    type: "radar",
+    data: data,
+    options: {
+      plugins: {
+        filler: {
+          propagate: false,
+        },
+        "samples-filler-analyser": {
+          target: "chart-analyser",
+        },
+      },
+      interaction: {
+        intersect: false,
+      },
+    },
+  });
+
+  $("#compare").click(() => {
+    var forms = document.querySelectorAll(".needs-validation");
+
+    if (forms[0].checkValidity()) {
+      let playerName = $("#selectedPlayer").val();
+      let playerName2 = $("#selectedPlayer2").val();
+
+      let playerImg = $("#playerImg")[0];
+      let player2Img = $("#player2Img")[0];
+      let rank1 = $("#rank1")[0];
+      let rank2 = $("#rank2")[0];
+
+      $.ajax({
+        type: "GET",
+        url: "/compare-player",
+        data: {
+          playerName: playerName,
+          playerName2: playerName2,
+        },
+        success: function (data) {
+        
+          playerImg.src = data.player1.imgUrl;
+          player2Img.src = data.player2.imgUrl;
+
+          rank1.innerHTML = data.player1.rank;
+          rank2.innerHTML = data.player2.rank;
+
+          rChart.data.datasets[0].data = data.player1.data
+          rChart.data.datasets[0].label = playerName
+
+          rChart.data.datasets[1].data = data.player2.data
+          rChart.data.datasets[1].label = playerName2
+
+          rChart.update()
+
+          cChart.data.datasets[0].data = data.player1.data
+          cChart.data.datasets[0].label = playerName
+
+          cChart.data.datasets[1].data = data.player2.data
+          cChart.data.datasets[1].label = playerName2
+
+          cChart.update()
+        },
+      });
+    }
+
+    forms[0].classList.add("was-validated");
+  });
+</script>
 {% endblock javascript %}
