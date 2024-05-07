@@ -16,7 +16,7 @@ I want to solve this problem by enabling following three features on my web appl
 My web application will be used by fantasy basketball managers and should help them make informed decision when deciding best possible lineup (who to start, who to bench), or choosing a player from free agent pool.
 Second feature I proposed to implement is a side-by-side comparison of two players. As we can see from Figure 2, this feature is available for Yahoo’s plus service subscribed users. Fantasy manager’s search for choosing the right player from free agent pool usually comes down to last two players. So the table which displays this comparison will help managers greatly.
 
-![image](https://github.com/shijirba/NBA-fantasy-lineup-recommender/assets/78646055/e5682aa9-cd05-494e-9710-494b7ad828f1)
+<img src="https://github.com/shijirba/NBA-fantasy-lineup-recommender/assets/78646055/e5682aa9-cd05-494e-9710-494b7ad828f1" width="300" height="300">
 
 _Figure 2. Side-by-side comparison_
 
@@ -29,7 +29,8 @@ Django player and rank models are created to store player game log data and play
 
 Figure 3: Basketball-reference.com sports statistics come in this form.
 
-There are two models used in my application which player and rank model. Player model as shown in Figure 4, are based on the Figure 3 table columns.
+There are two models used in my application which are player and rank model. Player model as shown in Figure 4, are based on the Figure 3 table columns.
+
 ![image](https://github.com/shijirba/NBA-fantasy-lineup-recommender/assets/78646055/ebe2c35c-2d87-404f-9778-51d6df0a1bdf)
 
 Figure 4: Django player model
@@ -56,7 +57,7 @@ Scraping function is the main component of my application. Coming up with scrapi
 Figure 7: Player data URL
 
 
-The URL is formatted in a way that matches the structure used on the website for player game logs. There are 3 loops in the scraping algorithm. First loop iterates through each letter of the alphabet. For each letter, it constructs a URL (letter_url) by appending the letter to the base_url, which is the base URL of the website where player data is stored. An HTTP GET request is sent to the letter_url using the requests library. If the request is successful (status code 200), the script proceeds to scrape player data from the webpage. The BeautifulSoup library is used to parse the HTML content of the webpage. The script finds all <tr> tags (table rows) containing player data on the page. For each <tr> tag, it looks for a <strong> tag (for player names) and <td> tags with the class 'right' (for career start and end years). If both a <strong> tag and the desired <td> tags are found, it extracts the player's name, career start year (year_min), and career end year (year_max). The player's name is split into first name and last name. A loop iterates through each year within the player’s career, from year_min to year_max +1. For each year, it constructs a game log URL (player_url) by combining various components, including the first letter of the last name, a portion of the last name, a portion of the first name, and the year. Player data, including first name, last name, year, and game log URL, is organized into a dictionary (player_data). The player_data dictionary is appended to the all_player_data list, collecting data for multiple players and years. The result is a list (all_player_data) containing dictionaries for each player, each with information about the player's name, career years, and game log URLs.
+The URL is formatted in a way that matches the structure used on the website for player game logs. There are 3 loops in the scraping algorithm. First loop iterates through each letter of the alphabet. For each letter, it constructs a URL (letter_url) by appending the letter to the base_url, which is the base URL of the website where player data is stored. An HTTP GET request is sent to the letter_url using the requests library. If the request is successful (status code 200), the script proceeds to scrape player data from the webpage. The BeautifulSoup library is used to parse the HTML content of the webpage. The script finds all <tr> tags (table rows) containing player data on the page. For each < tr > tag, it looks for a < strong > tag (for player names) and < td > tags with the class 'right' (for career start and end years). If both a < strong > tag and the desired < td > tags are found, it extracts the player's name, career start year (year_min), and career end year (year_max). The player's name is split into first name and last name. A loop iterates through each year within the player’s career, from year_min to year_max +1. For each year, it constructs a game log URL (player_url) by combining various components, including the first letter of the last name, a portion of the last name, a portion of the first name, and the year. Player data, including first name, last name, year, and game log URL, is organized into a dictionary (player_data). The player_data dictionary is appended to the all_player_data list, collecting data for multiple players and years. The result is a list (all_player_data) containing dictionaries for each player, each with information about the player's name, career years, and game log URLs.
 
 Compare features works by querying player model to fetch data for the two specified players based on the values of two query parameters, playerName1 and playerName2 from the get request. It retrieves the rankings of the two players from the Rank model. For each player, it calculates the average values for five statistics: points, rebounds, blocks, steals and assists. The averages are rounded to one decimal place. The data for each player, including their statistics, image URL, and ranking is organized into dictionaries. JSON response provides a comparison of statistics between two players, along with their image URLs and rankings. Comparison is shown in Figure 10.
 
@@ -70,6 +71,7 @@ Figure 10: Horizontal bar chart
 Figure 11: Radar chart
 
 ![image](https://github.com/shijirba/NBA-fantasy-lineup-recommender/assets/78646055/ffd0bf74-d258-47c6-a052-bda5962aca04)
+
 
 Figure 12: Final version which includes rank, prediction and average value
 
